@@ -1,23 +1,16 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Canvas, Text } from 'fabric';
+import { Canvas, Text, Image } from 'fabric';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Slider } from '@/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Save, Type, Palette, RotateCcw } from 'lucide-react';
+import { Download, Save, Palette, RotateCcw } from 'lucide-react';
 import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf';
 
 export default function FlyerEditor({ flyerData, onSave }) {
   const canvasRef = useRef(null);
   const fabricCanvasRef = useRef(null);
-  const [selectedObject, setSelectedObject] = useState(null);
-  const [fontSize, setFontSize] = useState(16);
-  const [textColor, setTextColor] = useState('#000000');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -34,11 +27,6 @@ export default function FlyerEditor({ flyerData, onSave }) {
     // Create flyer content
     createFlyerContent(canvas, flyerData);
 
-    // Handle object selection
-    canvas.on('selection:created', handleSelection);
-    canvas.on('selection:updated', handleSelection);
-    canvas.on('selection:cleared', () => setSelectedObject(null));
-
     setIsLoading(false);
 
     return () => {
@@ -47,88 +35,179 @@ export default function FlyerEditor({ flyerData, onSave }) {
   }, [flyerData]);
 
   const createFlyerContent = (canvas, data) => {
-    const { layout, content } = data;
+    // Set background
+    if (data.backgroundImage) {
+      console.log('Loading background image:', data.backgroundImage);
+      
+      // Create a new image element to preload
+      const img = new window.Image();
+      img.crossOrigin = 'anonymous';
+      
+      img.onload = () => {
+        console.log('Background image loaded successfully');
+        const fabricImage = new Image(img, {
+          left: 0,
+          top: 0,
+          scaleX: data.width / img.width,
+          scaleY: data.height / img.height
+        });
+        canvas.backgroundImage = fabricImage;
+        canvas.renderAll();
+      };
+      
+      img.onerror = (error) => {
+        console.error('Failed to load background image:', error);
+        console.log('Falling back to background color:', data.backgroundColor);
+        canvas.backgroundColor = data.backgroundColor;
+        canvas.renderAll();
+      };
+      
+      img.src = data.backgroundImage;
+    } else {
+      console.log('No background image, using color:', data.backgroundColor);
+      canvas.backgroundColor = data.backgroundColor;
+      canvas.renderAll();
+    }
 
-    // Clear existing content
-    canvas.clear();
+    const layout = data.layout;
+    const content = data.content;
 
-    // Add header
-    if (content.header) {
+    console.log('Creating flyer content:', { layout, content });
+
+    // Add header (main title)
+    if (content.header && layout.header) {
       const header = new Text(content.header, {
         left: layout.header.x,
         top: layout.header.y,
         width: layout.header.width,
         fontSize: layout.header.fontSize,
         fontWeight: layout.header.fontWeight,
-        fill: data.textColor,
+        fill: layout.header.color || data.textColor,
         textAlign: layout.header.textAlign,
         fontFamily: 'Arial, sans-serif'
       });
       canvas.add(header);
+      console.log('Added header:', content.header);
     }
 
-    // Add highlights
-    if (content.highlights && content.highlights.length > 0) {
-      const highlightsText = content.highlights.join('\n');
-      const highlights = new Text(highlightsText, {
-        left: layout.highlights.x,
-        top: layout.highlights.y,
-        width: layout.highlights.width,
-        fontSize: layout.highlights.fontSize,
-        fill: data.textColor,
-        lineHeight: layout.highlights.lineHeight,
+    // Add company name (for real estate templates)
+    if (content.companyName && layout.companyName) {
+      const companyName = new Text(content.companyName, {
+        left: layout.companyName.x,
+        top: layout.companyName.y,
+        width: layout.companyName.width,
+        fontSize: layout.companyName.fontSize,
+        fontWeight: layout.companyName.fontWeight,
+        fill: layout.companyName.color || data.accentColor,
+        textAlign: layout.companyName.textAlign,
         fontFamily: 'Arial, sans-serif'
       });
-      canvas.add(highlights);
+      canvas.add(companyName);
+      console.log('Added company name:', content.companyName);
+    }
+
+    // Add description
+    if (content.description && layout.description) {
+      const description = new Text(content.description, {
+        left: layout.description.x,
+        top: layout.description.y,
+        width: layout.description.width,
+        fontSize: layout.description.fontSize,
+        fill: layout.description.color || data.textColor,
+        lineHeight: layout.description.lineHeight,
+        fontFamily: 'Arial, sans-serif'
+      });
+      canvas.add(description);
+      console.log('Added description:', content.description);
+    }
+
+    // Add highlights/property features
+    if (content.highlights && content.highlights.length > 0) {
+      const highlightsText = content.highlights.join('\n');
+      const highlightsLayout = layout.propertyFeatures || layout.highlights || layout.features;
+      
+      if (highlightsLayout) {
+        const highlights = new Text(highlightsText, {
+          left: highlightsLayout.x,
+          top: highlightsLayout.y,
+          width: highlightsLayout.width,
+          fontSize: highlightsLayout.fontSize,
+          fill: highlightsLayout.color || data.textColor,
+          lineHeight: highlightsLayout.lineHeight,
+          fontFamily: 'Arial, sans-serif'
+        });
+        canvas.add(highlights);
+        console.log('Added highlights:', highlightsText);
+      }
     }
 
     // Add location
     if (content.location) {
-      const location = new Text(content.location, {
-        left: layout.location.x,
-        top: layout.location.y,
-        width: layout.location.width,
-        fontSize: layout.location.fontSize,
-        fontWeight: layout.location.fontWeight,
-        fill: data.textColor,
-        fontFamily: 'Arial, sans-serif'
-      });
-      canvas.add(location);
+      const locationLayout = layout.location || layout.contactInfo;
+      if (locationLayout) {
+        const location = new Text(content.location, {
+          left: locationLayout.x,
+          top: locationLayout.y,
+          width: locationLayout.width,
+          fontSize: locationLayout.fontSize,
+          fontWeight: locationLayout.fontWeight,
+          fill: locationLayout.color || data.textColor,
+          textAlign: locationLayout.textAlign,
+          fontFamily: 'Arial, sans-serif'
+        });
+        canvas.add(location);
+        console.log('Added location:', content.location);
+      }
     }
 
     // Add CTA
-    if (content.cta) {
+    if (content.cta && layout.cta) {
       const cta = new Text(content.cta, {
         left: layout.cta.x,
         top: layout.cta.y,
         width: layout.cta.width,
         fontSize: layout.cta.fontSize,
         fontWeight: layout.cta.fontWeight,
-        fill: data.accentColor,
+        fill: layout.cta.color || data.accentColor,
         textAlign: layout.cta.textAlign,
         fontFamily: 'Arial, sans-serif'
       });
       canvas.add(cta);
+      console.log('Added CTA:', content.cta);
+    }
+
+    // Add about us section (for interior design template)
+    if (content.aboutUs && layout.aboutUs) {
+      const aboutUs = new Text(content.aboutUs, {
+        left: layout.aboutUs.x,
+        top: layout.aboutUs.y,
+        width: layout.aboutUs.width,
+        fontSize: layout.aboutUs.fontSize,
+        fill: layout.aboutUs.color || data.textColor,
+        lineHeight: layout.aboutUs.lineHeight,
+        fontFamily: 'Arial, sans-serif'
+      });
+      canvas.add(aboutUs);
+      console.log('Added about us:', content.aboutUs);
+    }
+
+    // Add services section (for interior design template)
+    if (content.services && layout.services) {
+      const services = new Text(content.services, {
+        left: layout.services.x,
+        top: layout.services.y,
+        width: layout.services.width,
+        fontSize: layout.services.fontSize,
+        fill: layout.services.color || data.textColor,
+        lineHeight: layout.services.lineHeight,
+        fontFamily: 'Arial, sans-serif'
+      });
+      canvas.add(services);
+      console.log('Added services:', content.services);
     }
 
     canvas.renderAll();
-  };
-
-  const handleSelection = (e) => {
-    const activeObject = e.selected?.[0];
-    if (activeObject && activeObject.type === 'text') {
-      setSelectedObject(activeObject);
-      setFontSize(activeObject.fontSize || 16);
-      setTextColor(activeObject.fill || '#000000');
-    }
-  };
-
-  const updateSelectedText = (property, value) => {
-    if (!selectedObject) return;
-
-    selectedObject.set(property, value);
-    fabricCanvasRef.current.renderAll();
-    onSave(flyerData);
+    console.log('Flyer content created successfully');
   };
 
   const downloadAsPNG = () => {
@@ -166,7 +245,6 @@ export default function FlyerEditor({ flyerData, onSave }) {
   const resetCanvas = () => {
     if (fabricCanvasRef.current && flyerData) {
       createFlyerContent(fabricCanvasRef.current, flyerData);
-      setSelectedObject(null);
     }
   };
 
@@ -192,103 +270,52 @@ export default function FlyerEditor({ flyerData, onSave }) {
         />
       </div>
 
-      {/* Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Text Controls */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Type className="h-4 w-4" />
-              Text Controls
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="font-size">Font Size</Label>
-              <Slider
-                id="font-size"
-                min={8}
-                max={72}
-                step={1}
-                value={[fontSize]}
-                onValueChange={([value]) => {
-                  setFontSize(value);
-                  updateSelectedText('fontSize', value);
-                }}
-                disabled={!selectedObject}
-              />
-              <div className="text-xs text-gray-500">{fontSize}px</div>
-            </div>
+      {/* Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-sm">
+            <Palette className="h-4 w-4" />
+            Actions
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Button
+            onClick={downloadAsPNG}
+            className="w-full"
+            variant="outline"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download PNG
+          </Button>
+          
+          <Button
+            onClick={downloadAsPDF}
+            className="w-full"
+            variant="outline"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download PDF
+          </Button>
 
-            <div className="space-y-2">
-              <Label htmlFor="text-color">Text Color</Label>
-              <Input
-                id="text-color"
-                type="color"
-                value={textColor}
-                onChange={(e) => {
-                  setTextColor(e.target.value);
-                  updateSelectedText('fill', e.target.value);
-                }}
-                disabled={!selectedObject}
-                className="h-10"
-              />
-            </div>
-
-            <div className="text-xs text-gray-500">
-              {selectedObject ? 'Click and drag text to move it' : 'Select text to edit'}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Palette className="h-4 w-4" />
-              Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button
-              onClick={downloadAsPNG}
-              className="w-full"
-              variant="outline"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Download PNG
-            </Button>
-            
-            <Button
-              onClick={downloadAsPDF}
-              className="w-full"
-              variant="outline"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Download PDF
-            </Button>
-
-            <Button
-              onClick={resetCanvas}
-              className="w-full"
-              variant="outline"
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Reset Layout
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+          <Button
+            onClick={resetCanvas}
+            className="w-full"
+            variant="outline"
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Reset Layout
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Instructions */}
       <Card>
         <CardContent className="pt-6">
           <div className="text-sm text-gray-600 space-y-1">
-            <p><strong>Editing Tips:</strong></p>
-            <p>• Click on any text to select and edit it</p>
-            <p>• Drag text to reposition it</p>
-            <p>• Use the controls above to change font size and color</p>
-            <p>• Download your flyer as PNG or PDF</p>
+            <p><strong>Download Options:</strong></p>
+            <p>• Download your flyer as PNG for web use</p>
+            <p>• Download as PDF for printing</p>
+            <p>• Reset layout to restore original positioning</p>
           </div>
         </CardContent>
       </Card>

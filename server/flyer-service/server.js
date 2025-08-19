@@ -23,59 +23,14 @@ app.use(express.urlencoded({ extended: true }));
 const flyerTemplates = [
   {
     id: 'real-estate-1',
-    name: 'Modern Real Estate',
-    description: 'Clean and professional real estate flyer',
+    name: 'House For Sale',
+    description: 'Professional real estate flyer with modern design',
     width: 800,
     height: 1200,
-    backgroundColor: '#ffffff',
-    textColor: '#2c3e50',
-    accentColor: '#3498db',
-    layout: {
-      header: {
-        x: 50,
-        y: 50,
-        width: 700,
-        height: 100,
-        fontSize: 32,
-        fontWeight: 'bold',
-        textAlign: 'center'
-      },
-      highlights: {
-        x: 50,
-        y: 200,
-        width: 700,
-        height: 400,
-        fontSize: 16,
-        lineHeight: 1.5
-      },
-      location: {
-        x: 50,
-        y: 650,
-        width: 700,
-        height: 100,
-        fontSize: 18,
-        fontWeight: 'bold'
-      },
-      cta: {
-        x: 50,
-        y: 800,
-        width: 700,
-        height: 150,
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center'
-      }
-    }
-  },
-  {
-    id: 'real-estate-2',
-    name: 'Luxury Property',
-    description: 'Elegant luxury property flyer',
-    width: 800,
-    height: 1200,
-    backgroundColor: '#f8f9fa',
-    textColor: '#1a1a1a',
-    accentColor: '#d4af37',
+    backgroundColor: '#1a1a2e',
+    textColor: '#ffffff',
+    accentColor: '#ffd700',
+    backgroundImage: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=1200&fit=crop&auto=format&q=80',
     layout: {
       header: {
         x: 50,
@@ -84,78 +39,275 @@ const flyerTemplates = [
         height: 120,
         fontSize: 36,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
+        backgroundColor: 'rgba(26, 26, 46, 0.9)',
+        padding: 20,
+        borderRadius: 10
       },
-      highlights: {
+      companyName: {
         x: 50,
-        y: 220,
+        y: 200,
         width: 700,
-        height: 450,
-        fontSize: 18,
-        lineHeight: 1.6
-      },
-      location: {
-        x: 50,
-        y: 720,
-        width: 700,
-        height: 120,
-        fontSize: 20,
-        fontWeight: 'bold'
-      },
-      cta: {
-        x: 50,
-        y: 900,
-        width: 700,
-        height: 180,
+        height: 60,
         fontSize: 24,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
+        color: '#ffd700'
+      },
+      propertyFeatures: {
+        x: 50,
+        y: 300,
+        width: 700,
+        height: 300,
+        fontSize: 18,
+        lineHeight: 1.6,
+        backgroundColor: 'rgba(26, 26, 46, 0.8)',
+        padding: 20,
+        borderRadius: 10
+      },
+      contactInfo: {
+        x: 50,
+        y: 650,
+        width: 700,
+        height: 100,
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        backgroundColor: 'rgba(255, 215, 0, 0.9)',
+        color: '#1a1a2e',
+        padding: 15,
+        borderRadius: 10
+      },
+      smallImages: {
+        x: 50,
+        y: 800,
+        width: 700,
+        height: 150,
+        images: [
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=150&fit=crop'
+        ]
       }
     }
   },
   {
-    id: 'real-estate-3',
-    name: 'Family Home',
-    description: 'Warm and inviting family home flyer',
+    id: 'real-estate-2',
+    name: 'Modern Home For Sale',
+    description: 'Clean and contemporary home design',
     width: 800,
     height: 1200,
-    backgroundColor: '#fff5f5',
-    textColor: '#2d3748',
-    accentColor: '#e53e3e',
+    backgroundColor: '#ffffff',
+    textColor: '#2c3e50',
+    accentColor: '#3498db',
+    backgroundImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=1200&fit=crop&auto=format&q=80',
     layout: {
       header: {
         x: 50,
         y: 50,
         width: 700,
-        height: 100,
-        fontSize: 30,
+        height: 120,
+        fontSize: 40,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: 20,
+        borderRadius: 10,
+        color: '#2c3e50'
       },
-      highlights: {
+      description: {
         x: 50,
-        y: 180,
+        y: 200,
         width: 700,
-        height: 420,
-        fontSize: 17,
-        lineHeight: 1.5
+        height: 200,
+        fontSize: 18,
+        lineHeight: 1.6,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        padding: 20,
+        borderRadius: 10,
+        color: '#2c3e50'
       },
-      location: {
+      features: {
         x: 50,
-        y: 650,
+        y: 450,
         width: 700,
-        height: 100,
-        fontSize: 19,
-        fontWeight: 'bold'
+        height: 250,
+        fontSize: 16,
+        lineHeight: 1.5,
+        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+        padding: 20,
+        borderRadius: 10,
+        color: '#2c3e50'
+      },
+      smallImages: {
+        x: 50,
+        y: 750,
+        width: 700,
+        height: 150,
+        images: [
+          'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=150&fit=crop'
+        ]
       },
       cta: {
         x: 50,
-        y: 800,
+        y: 950,
         width: 700,
-        height: 160,
+        height: 100,
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        backgroundColor: '#3498db',
+        color: '#ffffff',
+        padding: 20,
+        borderRadius: 10
+      }
+    }
+  },
+  {
+    id: 'real-estate-3',
+    name: 'Luxury Modern Home',
+    description: 'Elegant luxury property with premium features',
+    width: 800,
+    height: 1200,
+    backgroundColor: '#ffffff',
+    textColor: '#2c3e50',
+    accentColor: '#27ae60',
+    backgroundImage: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=1200&fit=crop&auto=format&q=80',
+    layout: {
+      header: {
+        x: 50,
+        y: 50,
+        width: 700,
+        height: 120,
+        fontSize: 40,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: 20,
+        borderRadius: 10,
+        color: '#2c3e50'
+      },
+      description: {
+        x: 50,
+        y: 200,
+        width: 700,
+        height: 200,
+        fontSize: 18,
+        lineHeight: 1.6,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        padding: 20,
+        borderRadius: 10,
+        color: '#2c3e50'
+      },
+      features: {
+        x: 50,
+        y: 450,
+        width: 700,
+        height: 250,
+        fontSize: 16,
+        lineHeight: 1.5,
+        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+        padding: 20,
+        borderRadius: 10,
+        color: '#2c3e50'
+      },
+      smallImages: {
+        x: 50,
+        y: 750,
+        width: 700,
+        height: 150,
+        images: [
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=150&fit=crop'
+        ]
+      },
+      cta: {
+        x: 50,
+        y: 950,
+        width: 700,
+        height: 100,
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        backgroundColor: '#27ae60',
+        color: '#ffffff',
+        padding: 20,
+        borderRadius: 10
+      }
+    }
+  },
+  {
+    id: 'interior-design',
+    name: 'Crafting Dream Spaces',
+    description: 'Interior design and renovation services',
+    width: 800,
+    height: 1200,
+    backgroundColor: '#34495e',
+    textColor: '#ffffff',
+    accentColor: '#e74c3c',
+    backgroundImage: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&h=1200&fit=crop&auto=format&q=80',
+    layout: {
+      header: {
+        x: 50,
+        y: 50,
+        width: 700,
+        height: 120,
+        fontSize: 36,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        backgroundColor: 'rgba(52, 73, 94, 0.9)',
+        padding: 20,
+        borderRadius: 10
+      },
+      aboutUs: {
+        x: 50,
+        y: 200,
+        width: 700,
+        height: 150,
+        fontSize: 18,
+        lineHeight: 1.6,
+        backgroundColor: 'rgba(52, 73, 94, 0.8)',
+        padding: 20,
+        borderRadius: 10
+      },
+      services: {
+        x: 50,
+        y: 400,
+        width: 700,
+        height: 400,
+        fontSize: 16,
+        lineHeight: 1.5,
+        backgroundColor: 'rgba(52, 73, 94, 0.7)',
+        padding: 20,
+        borderRadius: 10
+      },
+      serviceImages: {
+        x: 50,
+        y: 850,
+        width: 700,
+        height: 200,
+        images: [
+          'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=150&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=150&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=150&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=150&h=150&fit=crop'
+        ]
+      },
+      cta: {
+        x: 50,
+        y: 1100,
+        width: 700,
+        height: 80,
         fontSize: 22,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
+        backgroundColor: '#e74c3c',
+        color: '#ffffff',
+        padding: 15,
+        borderRadius: 10
       }
     }
   }
@@ -254,48 +406,100 @@ app.post('/api/flyers/generate', (req, res) => {
 
 // Helper function to parse content into sections
 function parseContentIntoSections(content) {
-  const lines = content.split('\n').filter(line => line.trim());
+  console.log('=== PARSING CONTENT ===');
+  console.log('Input content:', content);
   
+  // Extract the actual content from the enhanced text
   let header = '';
   let highlights = [];
-  let location = '';
   let cta = '';
-
-  let currentSection = 'header';
   
+  // Extract header (e.g., "500 dollar 3 bedroom - For Sale!")
+  const headerMatch = content.match(/\*\*([^*]+)\*\*\s*-\s*For\s*Sale/);
+  if (headerMatch) {
+    header = headerMatch[1].trim();
+    console.log('Extracted header:', header);
+  }
+  
+  // Extract bullet points from the enhanced text
+  const lines = content.split('\n');
   for (const line of lines) {
     const trimmedLine = line.trim();
-    
-    if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
-      // Bold text - likely header
-      header = trimmedLine.replace(/\*\*/g, '');
-      currentSection = 'highlights';
-    } else if (trimmedLine.includes('Highlights:') || trimmedLine.includes('Property Highlights:')) {
-      currentSection = 'highlights';
-    } else if (trimmedLine.includes('Location') || trimmedLine.includes('Prime Location')) {
-      currentSection = 'location';
-      location = trimmedLine;
-    } else if (trimmedLine.includes('Call') || trimmedLine.includes('Don\'t miss') || trimmedLine.includes('Dream Home')) {
-      currentSection = 'cta';
-      cta = trimmedLine;
-    } else if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
-      // Bullet points
+    if (trimmedLine.startsWith('•')) {
       highlights.push(trimmedLine);
-    } else if (currentSection === 'highlights' && trimmedLine) {
-      highlights.push(trimmedLine);
-    } else if (currentSection === 'location' && trimmedLine) {
-      location += ' ' + trimmedLine;
-    } else if (currentSection === 'cta' && trimmedLine) {
-      cta += ' ' + trimmedLine;
+      console.log('Found highlight:', trimmedLine);
     }
   }
-
-  return {
-    header: header || 'Beautiful Property For Sale',
-    highlights: highlights.length > 0 ? highlights : ['• Amazing property features', '• Prime location', '• Don\'t miss this opportunity!'],
-    location: location || 'Prime location with excellent amenities',
-    cta: cta || 'Call today to schedule a private showing!'
+  
+  // Extract CTA (e.g., "Call Today for More Information!")
+  const ctaMatch = content.match(/\*\*Call[^*]*\*\*/);
+  if (ctaMatch) {
+    cta = ctaMatch[0].replace(/\*\*/g, '');
+    console.log('Extracted CTA:', cta);
+  }
+  
+  // If no header found, try alternative patterns
+  if (!header) {
+    const altHeaderMatch = content.match(/([^-]+)\s*-\s*For\s*Sale/);
+    if (altHeaderMatch) {
+      header = altHeaderMatch[1].trim();
+      console.log('Extracted header (alt):', header);
+    }
+  }
+  
+  // If no highlights found, try to extract from the content
+  if (highlights.length === 0) {
+    // Look for bullet points in the original content
+    const bulletMatches = content.match(/•\s*([^•\n]+)/g);
+    if (bulletMatches) {
+      highlights = bulletMatches.map(h => h.trim());
+      console.log('Extracted highlights from content:', highlights);
+    }
+  }
+  
+  // If no CTA found, try alternative patterns
+  if (!cta) {
+    const altCtaMatch = content.match(/Call[^!]*!/);
+    if (altCtaMatch) {
+      cta = altCtaMatch[0];
+      console.log('Extracted CTA (alt):', cta);
+    }
+  }
+  
+  // If still no header found, use a default
+  if (!header) {
+    header = 'Beautiful Property For Sale';
+  }
+  
+  // If still no highlights found, use defaults
+  if (highlights.length === 0) {
+    highlights = [
+      '• Beautiful property with excellent features',
+      '• Prime location with great amenities',
+      '• Perfect for families and professionals',
+      '• Don\'t miss this amazing opportunity!'
+    ];
+  }
+  
+  // If still no CTA found, use default
+  if (!cta) {
+    cta = 'Call today to schedule a private showing!';
+  }
+  
+  const result = {
+    header: header,
+    companyName: 'Professional Real Estate',
+    description: 'Discover your dream home with this amazing property offering excellent features and prime location.',
+    highlights: highlights,
+    location: 'Prime location with excellent amenities and easy access to shopping, schools, and transportation.',
+    cta: cta,
+    aboutUs: '',
+    services: ''
   };
+
+  console.log('Final parsed content:', result);
+  console.log('=== END PARSING ===');
+  return result;
 }
 
 // Error handling middleware

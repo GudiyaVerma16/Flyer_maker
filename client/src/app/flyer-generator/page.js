@@ -58,59 +58,33 @@ export default function FlyerGenerator() {
       }
     } catch (error) {
       console.error('❌ Failed to load templates:', error);
-      console.error('Error details:', error.response?.status, error.response?.data);
-      toast.error(`Failed to load templates: ${error.message}`);
+      toast.error('Failed to load templates');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Load templates on component mount
-  useEffect(() => {
-    loadTemplates();
-  }, []);
-
-  // Monitor templates state changes
-  useEffect(() => {
-    console.log('Templates state updated:', templates.length, 'templates');
-    if (templates.length > 0) {
-      console.log('First template:', templates[0].name);
-    }
-  }, [templates]);
-
-  // Monitor selected template changes
-  useEffect(() => {
-    if (selectedTemplate) {
-      console.log('Selected template:', selectedTemplate.name);
-    }
-  }, [selectedTemplate]);
-
   const testAPICall = async () => {
-    console.log('=== MANUAL API TEST ===');
     try {
-      const response = await axios.get('http://localhost:5003/api/flyers/templates');
-      console.log('Manual test - Response:', response.data);
-      alert(`API Test Success: Found ${response.data.templates?.length} templates`);
+      const response = await axios.get(`${FLYER_SERVICE_URL}/health`);
+      console.log('Health check response:', response.data);
+      toast.success('API is working!');
     } catch (error) {
-      console.error('Manual test failed:', error);
-      alert(`API Test Failed: ${error.message}`);
+      console.error('Health check failed:', error);
+      toast.error('API health check failed');
     }
   };
 
   const enhanceText = async () => {
-    if (!userText.trim()) {
-      toast.error('Please enter some text to enhance');
-      return;
-    }
+    if (!userText.trim()) return;
 
     setIsEnhancing(true);
     try {
       const response = await axios.post(`${AI_SERVICE_URL}/api/ai/enhance-text`, {
-        text: userText,
-        template: selectedTemplate?.id
+        text: userText
       });
 
-      if (response.data.success) {
+      if (response.data && response.data.success) {
         setEnhancedText(response.data.enhancedText);
         toast.success('Text enhanced successfully!');
       } else {
@@ -118,22 +92,14 @@ export default function FlyerGenerator() {
       }
     } catch (error) {
       console.error('Error enhancing text:', error);
-      toast.error('Failed to enhance text. Please try again.');
+      toast.error('Failed to enhance text');
     } finally {
       setIsEnhancing(false);
     }
   };
 
   const generateFlyer = async () => {
-    if (!selectedTemplate) {
-      toast.error('Please select a template');
-      return;
-    }
-
-    if (!enhancedText.trim()) {
-      toast.error('Please enhance your text first');
-      return;
-    }
+    if (!selectedTemplate || !enhancedText.trim()) return;
 
     setIsGenerating(true);
     try {
@@ -142,7 +108,7 @@ export default function FlyerGenerator() {
         content: enhancedText
       });
 
-      if (response.data.success) {
+      if (response.data && response.data.success) {
         setFlyerData(response.data.flyer);
         toast.success('Flyer generated successfully!');
       } else {
@@ -150,50 +116,34 @@ export default function FlyerGenerator() {
       }
     } catch (error) {
       console.error('Error generating flyer:', error);
-      toast.error('Failed to generate flyer. Please try again.');
+      toast.error('Failed to generate flyer');
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const resetForm = () => {
-    setUserText('');
-    setEnhancedText('');
-    setFlyerData(null);
-  };
+  useEffect(() => {
+    loadTemplates();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            AI Flyer Generator
-          </h1>
-          <p className="text-lg text-gray-600">
-            Create stunning flyers with AI-powered text enhancement
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Flyer Generator</h1>
+          <p className="text-gray-600">Create professional flyers with AI-powered text enhancement</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Panel - Controls */}
+          {/* Left Column - Template Selection and Input */}
           <div className="space-y-6">
             {/* Template Selection */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Wand2 className="h-5 w-5" />
-                  Step 1: Choose Template
-                </CardTitle>
-                <CardDescription>
-                  Select a flyer template that matches your style
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {isLoading ? (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-                    <p className="text-gray-500 mb-4">Loading templates from API...</p>
+                    <p className="text-gray-500 mb-4">Loading templates...</p>
                     <div className="space-y-2">
                       <Button onClick={loadTemplates} variant="outline" size="sm" className="w-full">
                         Retry Loading
@@ -204,16 +154,11 @@ export default function FlyerGenerator() {
                     </div>
                   </div>
                 ) : templates.length > 0 ? (
-                  <div>
-                    <div className="mb-4 p-2 bg-green-50 border border-green-200 rounded text-sm">
-                      ✅ Loaded {templates.length} templates from API
-                    </div>
                     <TemplateSelector
                       templates={templates}
                       selectedTemplate={selectedTemplate}
                       onSelectTemplate={setSelectedTemplate}
                     />
-                  </div>
                 ) : (
                   <div className="text-center py-8">
                     <p className="text-gray-500 mb-4">No templates available</p>
@@ -232,23 +177,24 @@ export default function FlyerGenerator() {
 
             {/* Text Input */}
             <Card>
-              <CardHeader>
-                <CardTitle>Step 2: Enter Your Text</CardTitle>
-                <CardDescription>
-                  Describe your property or service in simple terms
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <TextInput
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Enter property details
+                    </label>
+                    <textarea
                   value={userText}
-                  onChange={setUserText}
-                  placeholder="Example: Beautiful large 3 bedroom, and swimming pool, 3400 sq ft, home for sale at Albany 12034"
+                      onChange={(e) => setUserText(e.target.value)}
+                      placeholder="Enter property details (e.g., address, price, features)"
+                      className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <div className="mt-4">
+                  </div>
+                  
                   <Button
                     onClick={enhanceText}
                     disabled={isEnhancing || !userText.trim()}
-                    className="w-full"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
                   >
                     {isEnhancing ? (
                       <>
@@ -269,23 +215,18 @@ export default function FlyerGenerator() {
             {/* Enhanced Text Display */}
             {enhancedText && (
               <Card>
-                <CardHeader>
-                  <CardTitle>Step 3: Enhanced Text</CardTitle>
-                  <CardDescription>
-                    Review and edit the AI-enhanced content
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-700 font-mono">
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-gray-900">Enhanced Text</h3>
+                    <div className="bg-gray-50 p-4 rounded-lg max-h-48 overflow-y-auto">
+                      <pre className="whitespace-pre-wrap text-sm text-gray-700">
                       {enhancedText}
                     </pre>
                   </div>
-                  <div className="mt-4 flex gap-2">
                     <Button
                       onClick={generateFlyer}
-                      disabled={isGenerating}
-                      className="flex-1"
+                      disabled={isGenerating || !selectedTemplate}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white py-3"
                     >
                       {isGenerating ? (
                         <>
@@ -299,66 +240,37 @@ export default function FlyerGenerator() {
                         </>
                       )}
                     </Button>
-                    <Button
-                      variant="outline"
-                      onClick={resetForm}
-                      className="flex-1"
-                    >
-                      Reset
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
             )}
           </div>
 
-          {/* Right Panel - Flyer Editor */}
+          {/* Right Column - Flyer Editor */}
           <div className="space-y-6">
+            {flyerData ? (
             <Card>
-              <CardHeader>
-                <CardTitle>Step 4: Flyer Editor</CardTitle>
-                <CardDescription>
-                  Customize your flyer with the interactive editor
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {flyerData ? (
-                  <FlyerEditor
-                    flyerData={flyerData}
-                    onSave={(data) => {
-                      setFlyerData(data);
-                      toast.success('Flyer saved successfully!');
-                    }}
-                  />
-                ) : (
-                  <div className="h-96 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <div className="text-center text-gray-500">
-                      <Wand2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>Generate a flyer to start editing</p>
+                <CardContent className="p-6">
+                  <FlyerEditor flyerData={flyerData} />
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center py-12">
+                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Download className="w-12 h-12 text-gray-400" />
                     </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Ready to Generate</h3>
+                    <p className="text-gray-500">
+                      Select a template, enter your details, and generate your flyer
+                    </p>
                   </div>
-                )}
               </CardContent>
             </Card>
+            )}
           </div>
         </div>
-
-        {/* Demo Instructions */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Demo Instructions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 text-sm">
-              <p><strong>1.</strong> Select a template from the available options</p>
-              <p><strong>2.</strong> Enter your property description (e.g., "Beautiful large 3 bedroom, and swimming pool, 3400 sq ft, home for sale at Albany 12034")</p>
-              <p><strong>3.</strong> Click "Enhance with AI" to generate professional content</p>
-              <p><strong>4.</strong> Click "Generate Flyer" to create your flyer</p>
-              <p><strong>5.</strong> Use the editor to customize text, colors, and layout</p>
-              <p><strong>6.</strong> Download your finished flyer</p>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
