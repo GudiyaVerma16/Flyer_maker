@@ -1,22 +1,9 @@
-import { auth } from "./auth";
-
-export default auth((req) => {
-  const isLoginPage = req.nextUrl.pathname.startsWith("/login");
-  const isAuthUser = !!req.auth;
-
-  if (isLoginPage) {
-    if (isAuthUser) {
-      return Response.redirect(new URL("/", req.url));
-    }
-
-    return null;
-  }
-
-  if (!isAuthUser) {
-    return Response.redirect(new URL("/login", req.url));
-  }
-});
+// Middleware disabled for Flyer Maker app - no authentication required
+export default function middleware(req) {
+  // Allow all requests without authentication
+  return null;
+}
 
 export const config = {
-  matcher: ["/", "/editor/:path*", "/login"],
+  matcher: [], // No routes require authentication
 };
