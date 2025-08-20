@@ -11,7 +11,12 @@ const PORT = process.env.PORT || 5003;
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+ origin: [
+    'http://localhost:3000', 
+    'http://127.0.0.1:3000',
+    'https://flyer-maker-henna.vercel.app',
+    /\.vercel\.app$/
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With']
