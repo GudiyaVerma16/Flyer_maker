@@ -11,8 +11,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { Wand2, Download, Save, RefreshCw } from 'lucide-react';
 
-const AI_SERVICE_URL = 'http://localhost:5002';
-const FLYER_SERVICE_URL = 'http://localhost:5003';
+const AI_SERVICE_URL = process.env.NEXT_PUBLIC_AI_SERVICE_URL || 'http://localhost:5002';
+const FLYER_SERVICE_URL = process.env.NEXT_PUBLIC_FLYER_SERVICE_URL || 'http://localhost:5003';
+
 
 console.log('Environment check:');
 console.log('AI_SERVICE_URL:', AI_SERVICE_URL);
