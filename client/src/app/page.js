@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowRight, Palette, Sparkles, Download } from "lucide-react";
 import Link from "next/link";
 
+// Updated for deployment with Render URLs
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -16,94 +17,94 @@ export default function Home() {
               <Palette className="h-8 w-8 text-indigo-600 mr-3" />
               <h1 className="text-2xl font-bold text-gray-900">Flyer Maker</h1>
             </div>
-            <Link href="/flyer-generator">
-              <Button className="bg-indigo-600 hover:bg-indigo-700">
+            <nav className="hidden md:flex space-x-8">
+              <Link href="/flyer-generator" className="text-gray-600 hover:text-indigo-600 transition-colors">
                 Create Flyer
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+              </Link>
+              <Link href="#features" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                Features
+              </Link>
+            </nav>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Create Professional Real Estate Flyers
-          </h2>
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            Create Professional
+            <span className="text-indigo-600"> Real Estate Flyers</span>
+          </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Generate beautiful, professional flyers for your real estate listings with AI-powered text enhancement and stunning templates.
+            Generate stunning, professional flyers for your property listings with AI-powered text enhancement and beautiful templates.
           </p>
-          <Link href="/flyer-generator">
-            <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-lg px-8 py-3">
-              Start Creating
-              <Sparkles className="ml-2 h-5 w-5" />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/flyer-generator">
+              <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700">
+                Start Creating
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <Button variant="outline" size="lg">
+              View Examples
             </Button>
-          </Link>
+          </div>
         </div>
 
-        {/* Features */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <Card className="text-center">
+        {/* Features Grid */}
+        <div id="features" className="grid md:grid-cols-3 gap-8 mb-16">
+          <Card className="border-0 shadow-lg">
             <CardHeader>
-              <div className="mx-auto w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
                 <Sparkles className="h-6 w-6 text-indigo-600" />
               </div>
-              <CardTitle>AI Text Enhancement</CardTitle>
-            </CardHeader>
-            <CardContent>
+              <CardTitle>AI-Powered Enhancement</CardTitle>
               <CardDescription>
-                Transform your basic property descriptions into compelling, professional marketing copy with AI assistance.
+                Automatically enhance your property descriptions with intelligent text generation
               </CardDescription>
-            </CardContent>
+            </CardHeader>
           </Card>
 
-          <Card className="text-center">
+          <Card className="border-0 shadow-lg">
             <CardHeader>
-              <div className="mx-auto w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
                 <Palette className="h-6 w-6 text-indigo-600" />
               </div>
-              <CardTitle>Beautiful Templates</CardTitle>
-            </CardHeader>
-            <CardContent>
+              <CardTitle>Professional Templates</CardTitle>
               <CardDescription>
-                Choose from professionally designed templates that showcase your properties in the best light.
+                Choose from a variety of beautiful, customizable templates designed for real estate
               </CardDescription>
-            </CardContent>
+            </CardHeader>
           </Card>
 
-          <Card className="text-center">
+          <Card className="border-0 shadow-lg">
             <CardHeader>
-              <div className="mx-auto w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
                 <Download className="h-6 w-6 text-indigo-600" />
               </div>
               <CardTitle>Easy Export</CardTitle>
-            </CardHeader>
-            <CardContent>
               <CardDescription>
-                Download your flyers as high-quality PNG images or PDF files ready for printing and sharing.
+                Download your flyers in high-quality formats ready for printing and sharing
               </CardDescription>
-            </CardContent>
+            </CardHeader>
           </Card>
         </div>
 
-        {/* CTA */}
-        <div className="text-center">
-          <Card className="bg-indigo-600 text-white border-0">
-            <CardContent className="pt-8 pb-8">
-              <h3 className="text-2xl font-bold mb-4">Ready to Create Your First Flyer?</h3>
-              <p className="text-indigo-100 mb-6">
-                Join thousands of real estate professionals who trust Flyer Maker for their marketing materials.
-              </p>
-              <Link href="/flyer-generator">
-                <Button size="lg" variant="secondary" className="text-indigo-600 bg-white hover:bg-gray-100">
-                  Get Started Now
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+        {/* CTA Section */}
+        <div className="text-center bg-white rounded-2xl shadow-lg p-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Ready to Create Your First Flyer?
+          </h2>
+          <p className="text-lg text-gray-600 mb-8">
+            Join thousands of real estate professionals who trust Flyer Maker for their marketing materials.
+          </p>
+          <Link href="/flyer-generator">
+            <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700">
+              Create Flyer Now
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
         </div>
       </main>
     </div>
