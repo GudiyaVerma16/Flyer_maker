@@ -3,9 +3,9 @@
 import { capturePaypalOrder } from "@/services/subscription-service";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
-function SubscriptionSuccess() {
+function SubscriptionSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState("processing");
@@ -42,6 +42,26 @@ function SubscriptionSuccess() {
         )}
       </div>
     </div>
+  );
+}
+
+function SubscriptionSuccess() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md rounded-lg border bg-card p-8 shadow-lg">
+          <div className="flex flex-col items-center text-center">
+            <Loader2 className="h-16 w-16 animate-spin text-primary mb-4" />
+            <h1 className="text-2xl font-bold mb-2">Loading...</h1>
+            <p className="text-muted-foreground mb-4">
+              Please wait
+            </p>
+          </div>
+        </div>
+      </div>
+    }>
+      <SubscriptionSuccessContent />
+    </Suspense>
   );
 }
 
